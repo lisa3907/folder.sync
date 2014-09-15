@@ -72,22 +72,29 @@ namespace Dirctory.Sync
 
             Parallel.ForEach(_filesB_only, _f =>
             {
-                if (__config.Remove == true)
+                if (__config.RemoveFiles == true)
                 {
                     try
                     {
                         File.SetAttributes(_f, FileAttributes.Normal);
                         File.Delete(_f);
+                    
+                        lock (__config)
+                            Console.WriteLine("[{0}]: {1}", ++__config.DeletedFile, _f);
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
+                        lock (__config)
+                            Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
+
                         Interlocked.Increment(ref _result);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
+                    lock (__config)
+                        Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
+
                     Interlocked.Increment(ref _result);
                 }
             });

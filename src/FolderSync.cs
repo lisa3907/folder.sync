@@ -90,22 +90,29 @@ namespace Dirctory.Sync
 
             Parallel.ForEach(_dirB_only, _d =>
             {
-                if (__config.Remove == true)
+                if (__config.RemoveDirs == true)
                 {
                     try
                     {
                         ClearAttributes(_d);
                         Directory.Delete(_d, true);
+
+                        lock (__config)
+                            Console.WriteLine("[{0}]: {1}", ++__config.DeletedFolder, _d);
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+                        lock (__config)
+                            Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+
                         Interlocked.Increment(ref _result);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+                    lock (__config)
+                        Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+
                     Interlocked.Increment(ref _result);
                 }
             });

@@ -12,9 +12,9 @@ namespace Dirctory.Sync
         {
             try
             {
-                if (args.Length < 3)
+                if (args.Length < 4)
                 {
-                    Console.WriteLine("Usage: {0} origin target removable[true/false]", AppDomain.CurrentDomain.FriendlyName);
+                    Console.WriteLine("Usage: {0} origin target remove_dirs remove_files", AppDomain.CurrentDomain.FriendlyName);
                     return;
                 }
 
@@ -23,7 +23,8 @@ namespace Dirctory.Sync
                     _config.Source = args[0];
                     _config.Target = args[1];
 
-                    _config.Remove = Boolean.Parse(args[2]);
+                    _config.RemoveDirs = Boolean.Parse(args[2]);
+                    _config.RemoveFiles = Boolean.Parse(args[3]);
 
                     var _a1 = args[0].Split(Path.DirectorySeparatorChar);
                     var _a2 = args[1].Split(Path.DirectorySeparatorChar);
@@ -41,12 +42,20 @@ namespace Dirctory.Sync
                 Parallel.Invoke(() =>
                     {
                         var _ndir = _syncer.TraverseFolder(_config.Source, _config.Target);
-                        Console.WriteLine("number of un-deleted folders: {0}", _ndir);
+                        
+                        Console.WriteLine();
+                        Console.WriteLine("un-deleted folders: {0}", _config.UnDeletedFolder);
+                        Console.WriteLine("   deleted folders: {0}", _config.DeletedFolder);
+                        Console.WriteLine();
                     },
                     () =>
                     {
                         var _nfile = _syncer.TraverseFile(_config.Source, _config.Target);
-                        Console.WriteLine("number of un-deleted files: {0}", _nfile);
+
+                        Console.WriteLine();
+                        Console.WriteLine("un-deleted files: {0}", _config.UnDeletedFile);
+                        Console.WriteLine("   deleted files: {0}", _config.DeletedFile);
+                        Console.WriteLine();
                     }
                 );
             }
