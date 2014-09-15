@@ -34,7 +34,7 @@ namespace Dirctory.Sync
                 var _intersect = (from _dir in _dirsB
                                   select _dir.ToLower()).Intersect(_dirsA, _folder_compare);
 
-                foreach (var _intB in _intersect)
+                Parallel.ForEach(_intersect, _intB =>
                 {
                     foreach (var _intA in _dirsA)
                     {
@@ -44,7 +44,7 @@ namespace Dirctory.Sync
                             break;
                         }
                     }
-                }
+                });
             }
             else
             {
@@ -70,7 +70,7 @@ namespace Dirctory.Sync
             var _filesB_only = (from _file in _filesB
                                 select _file.ToLower()).Except(_filesA, _file_compare);
 
-            Parallel.ForEach(_filesB_only, _f =>
+            foreach (var _f in _filesB_only)
             {
                 if (__config.RemoveFiles == true)
                 {
@@ -78,26 +78,21 @@ namespace Dirctory.Sync
                     {
                         File.SetAttributes(_f, FileAttributes.Normal);
                         File.Delete(_f);
-                    
-                        lock (__config)
-                            Console.WriteLine("[{0}]: {1}", ++__config.DeletedFile, _f);
+
+                        Console.WriteLine("'{0}': {1}", ++__config.DeletedFile, _f);
                     }
                     catch (Exception)
                     {
-                        lock (__config)
-                            Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
-
-                        Interlocked.Increment(ref _result);
+                        Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
                     }
                 }
                 else
                 {
-                    lock (__config)
-                        Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
-
-                    Interlocked.Increment(ref _result);
+                    Console.WriteLine("'{0}': {1}", ++__config.UnDeletedFile, _f);
                 }
-            });
+
+                _result++;
+            }
 
             return _result;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading;
 
@@ -85,30 +86,6 @@ namespace Dirctory.Sync
             get;
             set;
         }
-        
-        public int NoSourceFolders
-        {
-            get;
-            set;
-        }
-
-        public int NoSourceFiles
-        {
-            get;
-            set;
-        }
-
-        public int NoTargetFolders
-        {
-            get;
-            set;
-        }
-
-        public int NoTargetFiles
-        {
-            get;
-            set;
-        }
 
         public SyncConfig()
         {
@@ -120,23 +97,22 @@ namespace Dirctory.Sync
             RemoveDirs = false;
             RemoveFiles = false;
 
-            SourceExcludeDirs = new string[] { ".git" };
-            SourceExcludeFiles = new string[] { "" };
+            SourceExcludeDirs = GetStringArray("SourceExcludeDirs");
+            SourceExcludeFiles = GetStringArray("SourceExcludeFiles");
 
-            TargetExcludeDirs = new string[] { ".git" };
-            TargetExcludeFiles = new string[] { ".gitignore", ".gitattributes" };
+            TargetExcludeDirs = GetStringArray("TargetExcludeDirs");
+            TargetExcludeFiles = GetStringArray("TargetExcludeFiles");
 
             UnDeletedFolder = 0;
             UnDeletedFile = 0;
 
             DeletedFolder = 0;
             DeletedFile = 0;
+        }
 
-            NoSourceFolders = 0;
-            NoSourceFiles = 0;
-
-            NoTargetFolders = 0;
-            NoTargetFiles = 0;
+        private string[] GetStringArray(string p_appname)
+        {
+            return ConfigurationManager.AppSettings.Get(p_appname).Split(';');
         }
     }
 }

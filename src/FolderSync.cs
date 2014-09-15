@@ -36,7 +36,7 @@ namespace Dirctory.Sync
                 var _intersect = (from dir in _dirsB
                                   select dir.ToLower()).Intersect(_dirsA, _folder_compare);
 
-                foreach (var _intB in _intersect)
+                Parallel.ForEach(_intersect, _intB =>
                 {
                     foreach (var _intA in _dirsA)
                     {
@@ -46,7 +46,7 @@ namespace Dirctory.Sync
                             break;
                         }
                     }
-                }
+                });
             }
             else
             {
@@ -88,7 +88,7 @@ namespace Dirctory.Sync
             var _dirB_only = (from dir in _dirsB
                               select dir.ToLower()).Except(_dirsA, _folder_compare);
 
-            Parallel.ForEach(_dirB_only, _d =>
+            foreach (var _d in _dirB_only)
             {
                 if (__config.RemoveDirs == true)
                 {
@@ -97,25 +97,20 @@ namespace Dirctory.Sync
                         ClearAttributes(_d);
                         Directory.Delete(_d, true);
 
-                        lock (__config)
-                            Console.WriteLine("[{0}]: {1}", ++__config.DeletedFolder, _d);
+                        Console.WriteLine("[{0}]: {1}", ++__config.DeletedFolder, _d);
                     }
                     catch (Exception)
                     {
-                        lock (__config)
-                            Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
-
-                        Interlocked.Increment(ref _result);
+                        Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
                     }
                 }
                 else
                 {
-                    lock (__config)
-                        Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
-
-                    Interlocked.Increment(ref _result);
+                    Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
                 }
-            });
+
+                _result++;
+            }
 
             return _result;
         }
