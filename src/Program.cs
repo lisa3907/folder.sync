@@ -38,26 +38,30 @@ namespace Dirctory.Sync
                     _config.Offset = _a1.Length - 1;
                 }
 
-                var _syncer = new FileSync(_config);
+                var _syncer = new FolderSync(_config);
                 Parallel.Invoke(() =>
                     {
-                        var _ndir = _syncer.TraverseFolder(_config.Source, _config.Target);
-                        
-                        Console.WriteLine();
-                        Console.WriteLine("un-deleted folders: {0}", _config.UnDeletedFolder);
-                        Console.WriteLine("   deleted folders: {0}", _config.DeletedFolder);
-                        Console.WriteLine();
+                        _syncer.TraverseFolder(_config.Source, _config.Target);
                     },
                     () =>
                     {
-                        var _nfile = _syncer.TraverseFile(_config.Source, _config.Target);
-
-                        Console.WriteLine();
-                        Console.WriteLine("un-deleted files: {0}", _config.UnDeletedFile);
-                        Console.WriteLine("   deleted files: {0}", _config.DeletedFile);
-                        Console.WriteLine();
+                        _syncer.TraverseFile(_config.Source, _config.Target);
                     }
                 );
+
+                Console.WriteLine();
+                Console.WriteLine("un-deleted folders: {0}", _config.UnDeletedFolder);
+                Console.WriteLine("   deleted folders: {0}", _config.DeletedFolder);
+                Console.WriteLine("un-copied  folders: {0}", _config.UnCopiedFolder);
+                Console.WriteLine("   copied  folders: {0}", _config.CopiedFolder);
+
+                Console.WriteLine();
+
+                Console.WriteLine("un-deleted files: {0}", _config.UnDeletedFile);
+                Console.WriteLine("   deleted files: {0}", _config.DeletedFile);
+                Console.WriteLine("un-copied  files: {0}", _config.UnCopiedFile);
+                Console.WriteLine("   copied  files: {0}", _config.CopiedFile);
+                Console.WriteLine();
             }
             catch (Exception ex)
             {

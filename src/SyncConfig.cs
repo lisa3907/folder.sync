@@ -87,6 +87,30 @@ namespace Dirctory.Sync
             set;
         }
 
+        public int UnCopiedFolder
+        {
+            get;
+            set;
+        }
+
+        public int UnCopiedFile
+        {
+            get;
+            set;
+        }
+
+        public int CopiedFolder
+        {
+            get;
+            set;
+        }
+
+        public int CopiedFile
+        {
+            get;
+            set;
+        }
+
         public SyncConfig()
         {
             Source = @"d:\source-folder";
@@ -105,9 +129,13 @@ namespace Dirctory.Sync
 
             UnDeletedFolder = 0;
             UnDeletedFile = 0;
-
             DeletedFolder = 0;
             DeletedFile = 0;
+
+            UnCopiedFolder = 0;
+            UnCopiedFile = 0;
+            CopiedFolder = 0;
+            CopiedFile = 0;
         }
 
         private string[] GetStringArray(string p_appname)

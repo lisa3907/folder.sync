@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace Dirctory.Sync
 {
-    public class FolderSync
+    public class FolderSync : FileSync
     {
-        internal SyncConfig __config = null;
-
         public FolderSync(SyncConfig p_config)
+            : base(p_config)
         {
-            __config = p_config;
         }
 
         public int TraverseFolder(string p_source, string p_target)
@@ -23,6 +21,7 @@ namespace Dirctory.Sync
             if (Directory.Exists(p_source) && Directory.Exists(p_target))
             {
                 _result += RemoveFolder(p_source, p_target);
+                CopyFolder(p_source, p_target);
 
                 var _dirsA = Directory.EnumerateDirectories(p_source, "*.*", SearchOption.TopDirectoryOnly)
                             .Where(d => ContainsFolder(__config.SourceExcludeDirs, d) == false)
@@ -56,22 +55,6 @@ namespace Dirctory.Sync
             return _result;
         }
 
-        internal bool ContainsFolder(string[] p_exclude, string p_folder)
-        {
-            var _result = false;
-
-            foreach (var _d in p_exclude)
-            {
-                if (Path.GetFileName(p_folder).ToLower() == _d.ToLower())
-                {
-                    _result = true;
-                    break;
-                }
-            }
-
-            return _result;
-        }
-
         private int RemoveFolder(string p_source, string p_target)
         {
             var _result = 0;
@@ -97,16 +80,62 @@ namespace Dirctory.Sync
                         ClearAttributes(_d);
                         Directory.Delete(_d, true);
 
-                        Console.WriteLine("[{0}]: {1}", ++__config.DeletedFolder, _d);
+                        Console.WriteLine("-[{0}]: {1}", ++__config.DeletedFolder, _d);
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+                        Console.WriteLine("-[{0}]: {1}", ++__config.UnDeletedFolder, _d);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+                    Console.WriteLine("-[{0}]: {1}", ++__config.UnDeletedFolder, _d);
+                }
+
+                _result++;
+            }
+
+            return _result;
+        }
+
+        private int CopyFolder(string p_source, string p_target)
+        {
+            var _result = 0;
+
+            var _dirsA = Directory.EnumerateDirectories(p_source, "*.*", SearchOption.TopDirectoryOnly)
+                        .Where(d => ContainsFolder(__config.SourceExcludeDirs, d) == false)
+                        .ToList();
+
+            var _dirsB = Directory.EnumerateDirectories(p_target, "*.*", SearchOption.TopDirectoryOnly)
+                        .Where(d => ContainsFolder(__config.TargetExcludeDirs, d) == false)
+                        .ToList();
+
+            var _folder_compare = new FolderCompare(__config.Offset);
+            var _dirA_only = (from _d in _dirsA
+                              select _d.ToLower()).Except(_dirsB, _folder_compare);
+
+            foreach (var _d in _dirA_only)
+            {
+                if (__config.RemoveDirs == true)
+                {
+                    try
+                    {
+                        var _target = Path.Combine(p_target, Path.GetFileName(_d));
+                        if (!Directory.Exists(_target))
+                            Directory.CreateDirectory(_target);
+
+                        CopyFiles(_d, _target);
+
+                        Console.WriteLine("+[{0}]: {1}", ++__config.CopiedFolder, _d);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("+[{0}]: {1}", ++__config.UnCopiedFolder, _d);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("+[{0}]: {1}", ++__config.UnCopiedFolder, _d);
                 }
 
                 _result++;
