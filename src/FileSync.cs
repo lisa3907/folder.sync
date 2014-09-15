@@ -18,30 +18,37 @@ namespace Dirctory.Sync
         {
             var _result = 0;
 
-            _result += RemoveFiles(p_source, p_target);
-
-            var _dirsA = Directory.EnumerateDirectories(p_source, "*.*", SearchOption.TopDirectoryOnly)
-                        .Where(d => ContainsFolder(__config.SourceExcludeDirs, d) == false)
-                        .ToList();
-
-            var _dirsB = Directory.EnumerateDirectories(p_target, "*.*", SearchOption.TopDirectoryOnly)
-                        .Where(d => ContainsFolder(__config.TargetExcludeDirs, d) == false)
-                        .ToList();
-
-            var _folder_compare = new FolderCompare(__config.Offset);
-            var _intersect = (from _dir in _dirsB
-                              select _dir.ToLower()).Intersect(_dirsA, _folder_compare);
-
-            foreach (var _intB in _intersect)
+            if (Directory.Exists(p_source) && Directory.Exists(p_target))
             {
-                foreach (var _intA in _dirsA)
+                _result += RemoveFiles(p_source, p_target);
+
+                var _dirsA = Directory.EnumerateDirectories(p_source, "*.*", SearchOption.TopDirectoryOnly)
+                            .Where(d => ContainsFolder(__config.SourceExcludeDirs, d) == false)
+                            .ToList();
+
+                var _dirsB = Directory.EnumerateDirectories(p_target, "*.*", SearchOption.TopDirectoryOnly)
+                            .Where(d => ContainsFolder(__config.TargetExcludeDirs, d) == false)
+                            .ToList();
+
+                var _folder_compare = new FolderCompare(__config.Offset);
+                var _intersect = (from _dir in _dirsB
+                                  select _dir.ToLower()).Intersect(_dirsA, _folder_compare);
+
+                foreach (var _intB in _intersect)
                 {
-                    if (_folder_compare.Equals(_intA, _intB) == true)
+                    foreach (var _intA in _dirsA)
                     {
-                        _result += TraverseFile(_intA, _intB);
-                        break;
+                        if (_folder_compare.Equals(_intA, _intB) == true)
+                        {
+                            _result += TraverseFile(_intA, _intB);
+                            break;
+                        }
                     }
                 }
+            }
+            else
+            {
+                Console.WriteLine("not exists folder: {0} or {1}", p_source, p_target);
             }
 
             return _result;
