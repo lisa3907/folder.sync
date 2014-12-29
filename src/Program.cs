@@ -67,11 +67,11 @@ namespace Dirctory.Sync
             {
                 Console.WriteLine(ex);
             }
-            finally
-            {
-                Console.WriteLine("Press any key to exit.");
-                Console.ReadKey();
-            }
+            //finally
+            //{
+            //    Console.WriteLine("Press any key to exit.");
+            //    Console.ReadKey();
+            //}
         }
     }
 }
