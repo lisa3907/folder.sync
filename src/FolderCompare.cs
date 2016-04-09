@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Dirctory.Sync
 {
@@ -17,13 +15,14 @@ namespace Dirctory.Sync
         public bool Equals(string d1, string d2)
         {
             var _a1 = d1.Split(Path.DirectorySeparatorChar);
-            var _e1 = String.Empty;
+
+            var _e1 = "";
             for (var i = __offset; i < _a1.Length; i++)
             {
                 _e1 += _a1[i] + Path.DirectorySeparatorChar;
             }
             var _a2 = d2.Split(Path.DirectorySeparatorChar);
-            var _e2 = String.Empty;
+            var _e2 = "";
             for (var i = __offset; i < _a2.Length; i++)
             {
                 _e2 += _a2[i] + Path.DirectorySeparatorChar;
@@ -35,7 +34,7 @@ namespace Dirctory.Sync
         {
             var _arr = dir.Split(Path.DirectorySeparatorChar);
             
-            var _exc = String.Empty;
+            var _exc = "";
             for (var i = __offset; i < _arr.Length; i++)
             {
                 _exc += _arr[i] + Path.DirectorySeparatorChar;

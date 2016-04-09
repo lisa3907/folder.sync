@@ -89,13 +89,14 @@
   <PropertyGroup>
     <PostBuildEvent>:begin
 
-SET framebiz_path=$(SolutionDir)\output\$(ConfigurationName)
+SET framebiz_path=$(SolutionDir)\output\v5.1.2015.12\$(ConfigurationName)
 if not exist %25framebiz_path%25 mkdir %25framebiz_path%25
 goto :target_copy
 
 :target_copy
 copy /Y $(TargetPath) %25framebiz_path%25
 if exist $(TargetPath).config copy /Y $(TargetPath).config %25framebiz_path%25
+if exist $(TargetName).xml copy /Y $(TargetName).xml %25framebiz_path%25
 goto :refence_copy
 
 :refence_copy
