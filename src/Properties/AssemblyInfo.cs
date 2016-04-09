@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("folderSync")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("folderSync")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("OdinSoft - http://www.odinsoftware.co.kr")]
+[assembly: AssemblyProduct("OdinSoft GitHub Project")]
+[assembly: AssemblyCopyright("(C) 2015~2016 OdinSoft Corporation. All Rights Reserved")]
+[assembly: AssemblyTrademark("BlueFrog")]
 [assembly: AssemblyCulture("")]
 
 // ComVisible을 false로 설정하면 이 어셈블리의 형식이 COM 구성 요소에 
